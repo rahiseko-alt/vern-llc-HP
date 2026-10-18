@@ -1,0 +1,190 @@
+/* Interaction A: Word Flip (3D Semantic Reveal) */
+.word-flip {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  perspective: 900px;
+  display: inline-block;
+  vertical-align: baseline;
+  text-decoration: none;
+  outline: none;
+}
+
+.word-flip__stage {
+  position: relative;
+  display: inline-grid;
+  vertical-align: baseline;
+  text-align: center;
+  transform-style: preserve-3d;
+  transition: transform 560ms cubic-bezier(0.2, 0.75, 0.2, 1);
+  border-bottom: 1px dashed var(--rule-strong);
+  padding-bottom: 2px;
+}
+
+.word-flip:hover .word-flip__stage,
+.word-flip:focus-visible .word-flip__stage,
+.word-flip__stage.is-flipped {
+  transform: rotateX(-90deg);
+  border-bottom-color: var(--accent);
+}
+
+.word-flip__face {
+  grid-area: 1 / 1;
+  backface-visibility: hidden;
+  transform-origin: 50% 50%;
+  white-space: nowrap;
+}
+
+.word-flip__front {
+  transform: translateZ(0.55em);
+  color: var(--ink);
+}
+
+.word-flip__back {
+  transform: rotateX(90deg) translateZ(0.55em);
+  color: var(--accent);
+  font-feature-settings: "liga" 1, "dlig" 1;
+}
+
+.word-flip__note {
+  font-family: var(--font-meta);
+  font-size: 10px;
+  vertical-align: super;
+  color: var(--accent);
+  margin-left: 2px;
+  font-style: normal;
+}
+
+/* Interaction B: Typewriter (Lead types, no terminal) */
+.typewriter-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.typewriter-placeholder {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+  display: block;
+}
+
+.typewriter-visible {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  width: 1px;
+  height: 0.95em;
+  margin-left: 2px;
+  vertical-align: -0.06em;
+  background: var(--ink);
+  opacity: 0.7;
+  transition: opacity 0.4s ease;
+}
+
+.typewriter-cursor.is-done {
+  opacity: 0;
+}
+
+/* Interaction C: Proximity Lift */
+.proximity-lift {
+  display: block;
+  font-family: var(--font-display);
+}
+
+.proximity-lift span {
+  display: inline-block;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+
+/* Interaction D: Ink Reveal */
+.ink-reveal {
+  position: relative;
+  user-select: text;
+}
+
+.ink-reveal__ghost {
+  color: rgba(24, 24, 22, 0.16);
+  filter: blur(1.35px);
+  transition: filter 0.4s ease, color 0.4s ease;
+}
+
+.ink-reveal__ink {
+  position: absolute;
+  inset: 0;
+  color: var(--ink);
+  pointer-events: none;
+  mask-image: radial-gradient(circle 145px at var(--mx, 50%) var(--my, 50%), #000 0%, rgba(0, 0, 0, 0.9) 35%, transparent 72%);
+  -webkit-mask-image: radial-gradient(circle 145px at var(--mx, 50%) var(--my, 50%), #000 0%, rgba(0, 0, 0, 0.9) 35%, transparent 72%);
+  transition: opacity 0.3s ease;
+}
+
+.ink-reveal.is-fully-inked .ink-reveal__ghost {
+  color: var(--ink);
+  filter: none;
+}
+
+.ink-reveal.is-fully-inked .ink-reveal__ink {
+  display: none;
+}
+
+/* Interaction E: Categories Awake & Structure trigger */
+.structure-trigger {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--accent);
+  color: var(--accent);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0 2px;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.structure-trigger:hover,
+.structure-trigger:focus-visible {
+  background-color: rgba(122, 31, 26, 0.08);
+}
+
+.category-grid.structure-highlight .category-col {
+  border-color: var(--rule-strong);
+}
+
+.category-grid.structure-highlight .category-col__rule {
+  background-color: var(--accent);
+}
+
+.category-grid.structure-highlight .category-moment-item {
+  transform: translateY(-3px);
+}
+
+/* Reduced Motion Overrides */
+@media (prefers-reduced-motion: reduce) {
+  .word-flip__stage {
+    transition: none !important;
+  }
+  .ink-reveal__ghost {
+    color: var(--ink) !important;
+    filter: none !important;
+  }
+  .ink-reveal__ink {
+    display: none !important;
+  }
+  .typewriter-cursor {
+    display: none !important;
+  }
+  .proximity-lift span {
+    transform: none !important;
+  }
+  .category-moment-item {
+    transform: none !important;
+  }
+}
