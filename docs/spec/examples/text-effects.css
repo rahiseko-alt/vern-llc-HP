@@ -1,0 +1,85 @@
+:root {
+  --paper: #f1eee5;
+  --ink: #181816;
+  --rule: rgba(24, 24, 22, 0.2);
+}
+
+.word-flip {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  perspective: 900px;
+}
+
+.word-flip__stage {
+  position: relative;
+  display: inline-grid;
+  transform-style: preserve-3d;
+  transition: transform 560ms cubic-bezier(.2,.75,.2,1);
+}
+
+.word-flip__stage.is-flipped {
+  transform: rotateX(-90deg);
+}
+
+.word-flip__face {
+  grid-area: 1 / 1;
+  backface-visibility: hidden;
+  transform-origin: 50% 50%;
+}
+
+.word-flip__front {
+  transform: translateZ(0.55em);
+}
+
+.word-flip__back {
+  transform: rotateX(90deg) translateZ(0.55em);
+}
+
+.typewriter::after {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 0.9em;
+  margin-left: 0.08em;
+  vertical-align: -0.05em;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+.proximity-lift {
+  display: block;
+}
+
+.proximity-lift > * {
+  display: inline-block;
+  transform-origin: 50% 100%;
+}
+
+.ink-reveal {
+  position: relative;
+}
+
+.ink-reveal__ghost {
+  color: rgba(24, 24, 22, 0.14);
+  filter: blur(1.4px);
+}
+
+.ink-reveal__ink {
+  position: absolute;
+  inset: 0;
+  color: var(--ink);
+  pointer-events: none;
+  mask-image: radial-gradient(circle 120px at var(--mx) var(--my), #000 0 35%, transparent 72%);
+  -webkit-mask-image: radial-gradient(circle 120px at var(--mx) var(--my), #000 0 35%, transparent 72%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-flip__stage { transition: none; }
+  .ink-reveal__ghost { filter: none; color: var(--ink); }
+  .ink-reveal__ink { display: none; }
+}
