@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { KANT_ARCHIVE_DATA } from "./data/kantArchiveData";
+import { VERN } from "./data/vernData";
 import { TextFlip } from "./components/TextFlip";
 import { Typewriter } from "./components/Typewriter";
 import { ProximityLift } from "./components/ProximityLift";
@@ -11,127 +11,115 @@ export function App() {
   const [isStructureAwakened, setIsStructureAwakened] = useState(false);
   const [isFullyInked, setIsFullyInked] = useState(false);
 
-  const { work, principles, categories } = KANT_ARCHIVE_DATA;
+  const { company, statement, faculties, domains, roadmap, activity, designSource } = VERN;
+  const [verstand, vernunft] = faculties;
 
   return (
     <div className="editorial-root">
-      {/* Background Manuscript Texture Layer (Opus postumum fragment) */}
       <ManuscriptCanvas />
 
       <main className="editorial-container">
-        {/* Colophon Top Header */}
         <header className="colophon-bar">
           <div className="colophon-bar__left">
-            <span>{work.edition}</span>
+            <span className="colophon-bar__brand">{company.name}</span>
             <span>·</span>
-            <span>Riga: Johann Friedrich Hartknoch</span>
+            <span>{company.status}</span>
           </div>
           <div className="colophon-bar__right">
-            <span className="colophon-bar__tag">CRITIK I</span>
-            <span>{work.citationRange}</span>
+            <span className="colophon-bar__tag">Verstand / Vernunft</span>
+            <span>教育 · コミュニティ · 開発 · 業務改善</span>
           </div>
         </header>
 
-        {/* Section I: Title Page (Hero) */}
-        <section className="editorial-section title-page" id="title-page">
+        {/* § I — Title page: statement */}
+        <section className="editorial-section title-page" id="statement">
           <div className="title-page__ornament-top">
             <span className="title-page__line" />
             <span className="title-page__symbol">✦</span>
             <span className="title-page__line" />
           </div>
 
-          <p className="title-page__subhead">Systematische Philosophie · 1781</p>
+          <p className="title-page__subhead">{company.name} — Statement</p>
 
           <h1 className="title-page__main-title">
-            Critik der reinen{" "}
-            <span className="title-page__flip-container">
-              <TextFlip
-                front={principles.heroFlipPair.front}
-                back={principles.heroFlipPair.back}
-                note="i"
-              />
-            </span>
+            {statement.lead}
+            <TextFlip front={verstand.flipFront} back={verstand.flipBack} note={verstand.note} />
+            {statement.mid}
+            <TextFlip front={vernunft.flipFront} back={vernunft.flipBack} note={vernunft.note} />
+            {statement.tail}
           </h1>
 
           <div className="title-page__double-rule" />
 
           <div className="title-page__author-block">
-            <div className="title-page__author-name">{work.author}</div>
+            <div className="title-page__author-name">{company.name}</div>
             <div className="title-page__author-title">
-              {work.authorTitle} ({work.lifespan})
+              {company.legal} · {company.status}
             </div>
           </div>
 
-          {/* Typewriter: Historic typesetting without terminal look */}
           <div className="title-page__typewriter-box">
             <p className="title-page__quote-de">
-              <Typewriter text={principles.transcendentalQuote.german} speed={28} />
+              <Typewriter text={statement.body} />
             </p>
             <div className="title-page__quote-meta">
-              <span>{principles.transcendentalQuote.source}</span>
-              <span>Transscendentale Elementarlehre</span>
+              <span>Statement · 01</span>
+              <span>{statement.motto}</span>
             </div>
           </div>
 
-          <div className="title-page__imprint">{work.imprint}</div>
+          <div className="title-page__imprint">{activity}</div>
         </section>
 
-        {/* Section II: Tafel der Categorien */}
-        <section className="editorial-section" id="categories">
+        {/* § II — Four practice domains on Kant's table of categories */}
+        <section className="editorial-section" id="practice">
           <div className="section-label">
             <div>
               <span className="section-label__num">§ II</span>
-              <span>Tafel der Categorien (Table of Categories)</span>
+              <span>四つの実践領域</span>
             </div>
-            <div className="section-label__pagination">A 80 / B 106</div>
+            <div className="section-label__pagination">I · II · III · IV</div>
           </div>
 
           <header className="category-header">
-            <ProximityLift as="h2">
-              Die reinen Verstandesbegriffe
+            <ProximityLift as="h2" className="category-header__title">
+              Tafel der Praxis
             </ProximityLift>
             <p className="category-header__preamble">
-              The fourfold division of synthetic understanding. Hovering the fundamental{" "}
+              カントは、知性が世界を捉える形式を四つの綱目——量・質・関係・様相——に整理した。
+              Vern LLC の活動も、同じ{" "}
               <button
                 type="button"
                 className="structure-trigger"
-                onPointerEnter={() => setIsStructureAwakened(true)}
-                onPointerLeave={() => setIsStructureAwakened(false)}
+                aria-pressed={isStructureAwakened}
+                onPointerEnter={(e) => e.pointerType === "mouse" && setIsStructureAwakened(true)}
+                onPointerLeave={(e) => e.pointerType === "mouse" && setIsStructureAwakened(false)}
                 onFocus={() => setIsStructureAwakened(true)}
                 onBlur={() => setIsStructureAwakened(false)}
-                aria-label="Awaken categorical structure rules"
               >
-                STRUCTURE
+                構造
               </button>{" "}
-              manifests the architectural scaffolding connecting pure judgments to pure concepts.
+              で組まれている。
             </p>
           </header>
 
-          <CategoryTable
-            categories={categories}
-            isStructureAwakened={isStructureAwakened}
-          />
+          <CategoryTable domains={domains} isStructureAwakened={isStructureAwakened} />
         </section>
 
-        {/* Section III: Analytic of Concepts (Manifesto & Ink Reveal) */}
-        <section className="editorial-section" id="manifesto">
+        {/* § III — Nomen: origin of the name */}
+        <section className="editorial-section" id="nomen">
           <div className="section-label">
             <div>
               <span className="section-label__num">§ III</span>
-              <span>Transscendentale Analytik · Grundsatz</span>
+              <span>Nomen — 社名の由来</span>
             </div>
-            <div className="section-label__pagination">A 51 / B 75 · A 79 / B 105</div>
+            <div className="section-label__pagination">i · ii</div>
           </div>
 
           <div className="manifesto-grid">
             <aside className="manifesto-marginalia">
-              <div className="manifesto-marginalia__title">Marginalia</div>
-              <p style={{ marginBottom: "12px" }}>
-                Gedanken ohne Inhalt sind leer; Anschauungen ohne Begriffe sind blind.
-              </p>
-              <p style={{ color: "var(--ink-faint)" }}>
-                The intuition supplies the object; the category provides the pure concept. Knowledge exists solely in their synthesis.
-              </p>
+              <div className="manifesto-marginalia__title">Vern</div>
+              <p>{statement.origin}</p>
             </aside>
 
             <article className="manifesto-body">
@@ -140,59 +128,54 @@ export function App() {
                   type="button"
                   className="fix-ink-button"
                   aria-pressed={isFullyInked}
-                  onClick={() => setIsFullyInked((prev) => !prev)}
+                  onClick={() => setIsFullyInked((v) => !v)}
                 >
-                  {isFullyInked ? "Restore Interactive Ink" : "Fix Ink [Read Full]"}
+                  {isFullyInked ? "インクを戻す" : "全文を定着させる"}
                 </button>
               </div>
 
               <InkReveal isFullyInked={isFullyInked}>
-                <p style={{ marginBottom: "24px" }}>
-                  {principles.manifestoQuote.german}
-                </p>
-                <p style={{ fontStyle: "italic", color: "var(--ink-soft)" }}>
-                  {principles.manifestoQuote.english}
-                </p>
+                <dl className="faculty-list">
+                  {faculties.map((f) => (
+                    <div className="faculty-item" key={f.german}>
+                      <dt>
+                        <span className="faculty-note">{f.note}</span>
+                        <span className="faculty-german">{f.german}</span>
+                        <span className="faculty-ja">{f.ja}</span>
+                      </dt>
+                      <dd>{f.definition}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <p className="faculty-motto">{statement.motto}</p>
               </InkReveal>
             </article>
           </div>
         </section>
 
-        {/* Section IV: Opus postumum & Colophon */}
-        <section className="editorial-section" id="colophon">
+        {/* § IV — Ausblick: roadmap */}
+        <section className="editorial-section" id="ausblick">
           <div className="section-label">
             <div>
               <span className="section-label__num">§ IV</span>
-              <span>Opus postumum & Bibliographischer Nachweis</span>
+              <span>Ausblick — 今後の展開</span>
             </div>
-            <div className="section-label__pagination">AA XXI: 116</div>
+            <div className="section-label__pagination">01 — 04</div>
           </div>
 
           <div className="colophon-grid">
-            <div className="colophon-box">
-              <div className="colophon-box__title">Manuscript Trace · 1796–1803</div>
-              <p className="colophon-box__text">
-                "{principles.opusPostumum.german}"
-              </p>
-              <div className="colophon-box__meta">
-                {principles.opusPostumum.convolut}
+            {roadmap.map((r) => (
+              <div className="colophon-box" key={r.label}>
+                <div className="colophon-box__title">{r.label}</div>
+                <p className="colophon-box__heading">{r.title}</p>
+                <p className="colophon-box__text">{r.text}</p>
               </div>
-            </div>
-
-            <div className="colophon-box">
-              <div className="colophon-box__title">Synthesis & Understanding</div>
-              <p className="colophon-box__text">
-                "{principles.synthesisQuote.german}"
-              </p>
-              <div className="colophon-box__meta">
-                Critik der reinen Vernunft · {principles.synthesisQuote.source}
-              </div>
-            </div>
+            ))}
           </div>
 
           <footer className="footer-citations">
-            <div>{work.colophon}</div>
-            <div>Typographie nach den Proportionsgesetzen von 1781 / 2026 Edition</div>
+            <div>© {company.name}</div>
+            <div>Design source: {designSource}</div>
           </footer>
         </section>
       </main>

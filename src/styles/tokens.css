@@ -10,9 +10,9 @@
   --ghost: rgba(24, 24, 22, 0.08);
   --accent: #7A1F1A;
 
-  --font-display: "Cormorant Garamond", "EB Garamond", Georgia, serif;
-  --font-body: "EB Garamond", Georgia, serif;
-  --font-meta: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Cormorant Garamond", "Shippori Mincho", "EB Garamond", Georgia, serif;
+  --font-body: "EB Garamond", "Shippori Mincho", Georgia, serif;
+  --font-meta: "Inter", "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-serif;
 
   --page-max-width: 1240px;
   --gutter: 24px;
@@ -28,8 +28,10 @@ html {
   background-color: var(--paper);
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 18px;
-  line-height: 1.65;
+  font-size: 17px;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  font-feature-settings: "palt" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;

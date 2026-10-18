@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { pointerStore } from "../utils/pointerStore";
 
 interface InkRevealProps {
@@ -6,69 +6,77 @@ interface InkRevealProps {
   isFullyInked?: boolean;
 }
 
+/**
+ * Interaction D — ink settles near the pointer (no light, no background change).
+ * Touch devices, reduced motion and keyboard focus get the fully inked text.
+ * The rAF loop only runs while the ink position is still moving.
+ */
 export function InkReveal({ children, isFullyInked = false }: InkRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [coords, setCoords] = useState<{ x: string; y: string }>({
-    x: "50%",
-    y: "50%",
-  });
+  const [noHover, setNoHover] = useState(false);
 
   useEffect(() => {
-    if (isFullyInked || pointerStore.prefersReducedMotion()) return;
+    setNoHover(!pointerStore.canHoverFine() || pointerStore.prefersReducedMotion());
+  }, []);
 
-    let targetX = 0;
-    let targetY = 0;
-    let currentX = 0;
-    let currentY = 0;
-    let animationFrameId: number;
-    let isInside = false;
+  const fullyInked = isFullyInked || noHover;
 
-    const container = containerRef.current;
-    if (!container) return;
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || fullyInked) return;
 
-    const onPointerMove = (e: PointerEvent) => {
-      const rect = container.getBoundingClientRect();
-      targetX = e.clientX - rect.left;
-      targetY = e.clientY - rect.top;
-      if (!isInside) {
-        currentX = targetX;
-        currentY = targetY;
-        isInside = true;
+    let tx = 0, ty = 0, cx = 0, cy = 0;
+    let raf = 0;
+    let running = false;
+    let entered = false;
+
+    const tick = () => {
+      cx += (tx - cx) * 0.22;
+      cy += (ty - cy) * 0.22;
+      el.style.setProperty("--mx", `${cx.toFixed(1)}px`);
+      el.style.setProperty("--my", `${cy.toFixed(1)}px`);
+      if (Math.abs(tx - cx) > 0.3 || Math.abs(ty - cy) > 0.3) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        running = false;
       }
     };
 
-    const onPointerLeave = () => {
-      isInside = false;
-    };
-
-    const loop = () => {
-      if (isInside) {
-        // Smooth ink flow lerp
-        currentX += (targetX - currentX) * 0.22;
-        currentY += (targetY - currentY) * 0.22;
-        container.style.setProperty("--mx", `${currentX.toFixed(1)}px`);
-        container.style.setProperty("--my", `${currentY.toFixed(1)}px`);
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      tx = e.clientX - r.left;
+      ty = e.clientY - r.top;
+      if (!entered) {
+        cx = tx;
+        cy = ty;
+        entered = true;
+        el.classList.add("is-inking");
       }
-      animationFrameId = requestAnimationFrame(loop);
+      if (!running) {
+        running = true;
+        raf = requestAnimationFrame(tick);
+      }
     };
 
-    container.addEventListener("pointermove", onPointerMove);
-    container.addEventListener("pointerleave", onPointerLeave);
-    animationFrameId = requestAnimationFrame(loop);
+    const onLeave = () => {
+      entered = false;
+      el.classList.remove("is-inking");
+    };
 
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerleave", onLeave);
     return () => {
-      container.removeEventListener("pointermove", onPointerMove);
-      container.removeEventListener("pointerleave", onPointerLeave);
-      cancelAnimationFrame(animationFrameId);
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerleave", onLeave);
+      cancelAnimationFrame(raf);
     };
-  }, [isFullyInked]);
+  }, [fullyInked]);
 
   return (
     <div
       ref={containerRef}
-      className={`ink-reveal ${isFullyInked ? "is-fully-inked" : ""}`}
-      tabIndex={0}
-      aria-label="Interactive ink revealed passage"
+      className={`ink-reveal ${fullyInked ? "is-fully-inked" : ""}`}
+      tabIndex={fullyInked ? undefined : 0}
     >
       <div className="ink-reveal__ghost">{children}</div>
       <div className="ink-reveal__ink" aria-hidden="true">

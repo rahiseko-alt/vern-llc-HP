@@ -67,11 +67,6 @@ export function ManuscriptCanvas() {
       ctx.moveTo(820, 725);
       ctx.lineTo(820, 875);
       ctx.stroke();
-
-      // Stamp-like archival note
-      ctx.font = "italic 16px 'EB Garamond', serif";
-      ctx.fillStyle = "rgba(122, 31, 26, 0.4)";
-      ctx.fillText("BBAW · Opus postumum Convolut VII · Folio 14b", 80, 1000);
     }
 
     // 2. WebGL Setup
